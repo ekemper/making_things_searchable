@@ -1,6 +1,7 @@
 # !/usr/bin/python
 import os
 import ocr
+from printer import pr
 
 def gatherFilePaths():
     rawFilePaths = []   
@@ -13,25 +14,23 @@ def gatherFilePaths():
 
 def isImage(filePath):
     name, ext = os.path.splitext(filePath)
-    possibleImageExtensions = ['jpg', 'jpeg', '.png']
-    if ext in possibleImageExtensions:
-        return True
+    possibleImageExtensions = ['.jpg', '.jpeg', '.png']
+    for e in possibleImageExtensions:
+        if e == ext:
+            return True
 
     return False 
 
 def generateDocument(filePath):
-    newDoc = {}
-    
+    text = ''
+
     if isImage(filePath):
-        imageText = ocr.getText(filePath)
+        text = ocr.getText(filePath)
 
-    newDoc = {
+    return {
         'rawFilePath': filePath,
-        'text': imageText
+        'text': text
     }
-
-
-
 
 def generateDocuments(rawFilePaths):
     newDocuments = []
@@ -42,4 +41,10 @@ def generateDocuments(rawFilePaths):
     return newDocuments
     
     
-    
+def main():
+    filePaths = gatherFilePaths()
+    newDocs = generateDocuments(filePaths)
+    pr({'newDocs': newDocs})
+
+if __name__ == '__main__':
+    main()
